@@ -147,87 +147,44 @@ jobs:
         if: always()
         run: |
           if [[ "${{ env.status }}" == "success" ]]; then
-            STATUS_ICON="✅"
             STATUS_LABEL="Berhasil"
           else
-            STATUS_ICON="❌"
             STATUS_LABEL="Gagal"
           fi
 
-          # Tentukan ikon web status
-          WEB_STATUS="${{ env.P_WEB_STATUS }}"
-          if echo "$WEB_STATUS" | grep -qi "LIVE"; then
-            WEB_ICON="🟢"
-          elif echo "$WEB_STATUS" | grep -qi "waiting"; then
-            WEB_ICON="🟡"
-          else
-            WEB_ICON="🔴"
-          fi
-
           cat >> "$GITHUB_STEP_SUMMARY" << EOF
-          # 🚀 AutoDeploy — $REPO_SLUG
-
-          ## Status Deploy
+          # AutoDeploy — $REPO_SLUG
 
           | Info | Detail |
           | :--- | :--- |
-          | **Status** | $STATUS_ICON $STATUS_LABEL |
-          | **App Type** | \`$APP_TYPE\` |
-          | **Mode** | \`$DEPLOY_MODE\` |
-          | **ZIP Size** | \`${{ env.zip_size }}\` |
-          | **Web Status** | $WEB_ICON ${{ env.P_WEB_STATUS }} |
-          | **Service Status** | \`${{ env.P_SRV_STATUS }}\` |
-
-          ## 🌐 Akses Aplikasi
-
-          | Info | Detail |
-          | :--- | :--- |
+          | **Status Deploy** | $STATUS_LABEL |
           | **Domain** | [${{ env.P_DOMAIN }}](${{ env.P_DOMAIN }}) |
+          | **App Type** | \`$APP_TYPE\` |
+          | **Web Status** | ${{ env.P_WEB_STATUS }} |
+          | **Service Status** | \`${{ env.P_SRV_STATUS }}\` |
           | **Port** | \`${{ env.P_PORT }}\` |
-
-          ## 🔐 Akses SSH
-
-          | Info | Detail |
-          | :--- | :--- |
           | **SSH User** | \`${{ env.P_SSH_USER }}\` |
           | **SSH Password** | \`${{ env.P_SSH_PASS }}\` |
           | **SSH Command** | \`${{ env.P_SSH_CMD }}\` |
           | **Service** | \`${{ env.P_SERVICE }}\` |
           | **File Owner** | \`${{ env.P_FILE_OWNER }}\` |
+          | **ZIP Size** | \`${{ env.zip_size }}\` |
 
-          ## 📋 Langkah Setelah Deploy (Laravel)
+          ## Panduan Setup Lanjutan
 
-          > Jika ini deploy **pertama**, ikuti langkah berikut via SSH:
+          Deployment awal sudah diproses oleh sistem AutoDeploy.
 
-          \`\`\`bash
-          # 1. Masuk SSH (password di tabel atas)
-          ${{ env.P_SSH_CMD }}
+          Untuk akses SSH, konfigurasi Laravel, file \`.env\`, database, migration, storage link, permission, dan restart service, silakan ikuti panduan berikut:
 
-          # 2. Install dependencies (PATH sudah otomatis, langsung ketik)
-          composer install --no-dev --optimize-autoloader
+          **Panduan Deployment:** ${{ env.GUIDE_URL }}
 
-          # 3. Generate APP_KEY
-          php artisan key:generate
+          ## Informasi Permission
 
-          # 4. Migrasi database (.env & DB sudah dibuat otomatis)
-          php artisan migrate --force
+          > Semua file di-set ke **\`www:www\`** (folder: 775, file: 664).
+          > SSH user **\`${{ env.P_SSH_USER }}\`** sudah ditambahkan ke group **\`www\`** sehingga bisa membaca dan menulis file tanpa \`sudo\`.
+          > File \`.env\` di-set **640** untuk keamanan.
 
-          # 5. Buat symlink storage
-          php artisan storage:link
-
-          # 6. Aktifkan web
-          restart-app
-          \`\`\`
-
-          > Jika ini **update**, aplikasi sudah langsung aktif — tidak perlu setup ulang.
-
-          ## ℹ️ Informasi Permission
-
-          > File di-set ke **\`${{ env.P_FILE_OWNER }}\`** (folder: 775, file: 664).
-          > SSH user **\`${{ env.P_SSH_USER }}\`** sudah bisa langsung edit file dan jalankan \`php artisan\`.
-          > Gunakan perintah \`fix-perm\` jika ada masalah permission.
-
-          <details><summary>📄 Lihat Log Server Lengkap</summary>
+          <details><summary>Lihat Log Server</summary>
 
           \`\`\`text
           ${{ env.RAW_RESPONSE }}
