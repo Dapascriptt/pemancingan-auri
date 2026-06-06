@@ -158,7 +158,7 @@
             <div class="container">
                 <div class="section-head">
                     <p class="eyebrow">Fasilitas</p>
-                    <h2>Fasilitas Lengkap untuk Memancing Lebih Nyaman</h2>
+                    <h2>Fasilitas Lengkap untuk Mancing Lebih Nyaman</h2>
                     <p>Kebutuhan utama pengunjung tersedia dalam area yang tertata dan mudah diakses.</p>
                 </div>
                 <div class="feature-grid stagger">
